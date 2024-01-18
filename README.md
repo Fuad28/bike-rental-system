@@ -1,2 +1,2 @@
-# school-management-system
-A school management system
+# Bike-rental-system
+A bike rental system
