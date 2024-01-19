@@ -1,0 +1,27 @@
+{
+  "name": "bike-rental-system",
+  "version": "1.0.0",
+  "description": "A bike rental system",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Fuad28/bike-rental-system.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Fuad28/bike-rental-system/issues"
+  },
+  "homepage": "https://github.com/Fuad28/bike-rental-system#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.1",
+    "dotenv": "^16.3.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20.11.5"
+  }
+}
