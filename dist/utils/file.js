@@ -32,48 +32,52 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-const utils_1 = require("./utils");
-const fs = __importStar(require("fs/promises"));
-const path = __importStar(require("path"));
-function start() {
-    return __awaiter(this, void 0, void 0, function* () {
-        yield _readFile("data/user.json");
-        console.log("Welcome to the bike rental shop. Please login to proceed.");
-        const email = yield (0, utils_1.getUserInput)("What's your email: ");
-        const password = yield (0, utils_1.getUserInput)("What's your password: ");
-        console.log(`Email is ${email}`);
-    });
-}
-const currentDir = __dirname;
-function _readFile(filePath) {
-    return __awaiter(this, void 0, void 0, function* () {
-        filePath = path.join(currentDir, ...filePath.split("/"));
-        let data;
-        try {
-            const flags = fs.constants.F_OK | fs.constants.W_OK;
-            console.log("hereeeeeeeeeeee 1");
-            console.log(`O_CRAT: ${fs.constants.O_CREAT}`);
-            yield fs.access(filePath, flags);
-            console.log("hereeeeeeeeeeee 2");
-            data = yield fs.readFile(filePath, "utf-8");
-            return JSON.parse(data);
-        }
-        catch (err) {
-            const error = err;
-            console.log("hereeeeeeeeeeee 3");
-            if (error.code == "ENOENT") {
-                console.log("hereeeeeeeeeeee 4");
-                let defaultJsonData = JSON.stringify({ data: [] });
-                yield fs.writeFile(filePath, defaultJsonData);
-                console.log("hereeeeeeeeeeee 5");
+exports.FileManager = void 0;
+const fs = __importStar(require("node:fs/promises"));
+class FileManager {
+    static writeToFile(fileName, data) {
+        return __awaiter(this, void 0, void 0, function* () {
+            try {
+                const filePath = "../data/" + fileName;
+                let jsonData = JSON.stringify(data, null, 2);
+                let fileData = yield this._readFile(filePath);
+                console.log(`FILEDAT: ${fileData}`);
+            }
+            catch (error) {
+                console.error(`Error writing to file: ${error}`);
+            }
+            return data;
+        });
+    }
+    static _readFile(filePath) {
+        return __awaiter(this, void 0, void 0, function* () {
+            let data;
+            try {
+                console.log("hereeeeeeeeeeee 1");
+                yield fs.access(filePath, fs.constants.O_CREAT);
+                console.log("hereeeeeeeeeeee 2");
                 data = yield fs.readFile(filePath, "utf-8");
                 return JSON.parse(data);
             }
-            else {
-                console.error(`Error reading file: ${error.message}`);
-                return null;
+            catch (err) {
+                const error = err;
+                console.log("hereeeeeeeeeeee 3");
+                if (error.code == "ENOENT") {
+                    console.log("hereeeeeeeeeeee 4");
+                    yield fs.writeFile(filePath, []);
+                    console.log("hereeeeeeeeeeee 5");
+                    data = yield fs.readFile(filePath, "utf-8");
+                    return JSON.parse(data);
+                }
+                else {
+                    console.error(`Error reading file: ${error.message}`);
+                    return null;
+                }
             }
-        }
-    });
+        });
+    }
+    static getFromFile() {
+        return __awaiter(this, void 0, void 0, function* () { });
+    }
 }
-start().then(() => console.log("Finished!"));
+exports.FileManager = FileManager;
