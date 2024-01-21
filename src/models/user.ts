@@ -1,4 +1,4 @@
-// import { hash, compare } from "bcrypt-ts";
+import * as bcrypt from "bcrypt";
 
 import { InUserData } from "../utils/types";
 import { userDataFile } from "../utils/constants";
@@ -18,7 +18,7 @@ export class User {
 		email: string,
 		password: string
 	): Promise<User> {
-		// password = await hash(password, 10);
+		password = await bcrypt.hash(password, 10);
 		await FileManager.writeToFile(userDataFile, {
 			firstName,
 			lastName,
@@ -34,7 +34,7 @@ export class User {
 		let user = await FileManager.getFromFile<InUserData>(userDataFile, "email", email);
 		password;
 
-		let validPassword: boolean = true; //await compare(password, user.password);
+		let validPassword: boolean = await bcrypt.compare(password, user.password);
 
 		if (validPassword) {
 			return new User(user.firstName, user.lastName, user.email, user.isAdmin);
