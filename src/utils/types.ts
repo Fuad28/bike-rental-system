@@ -1,12 +1,13 @@
-export type OutUserData = {
+import { enums } from ".";
+
+export type InUserData = {
 	readonly id: number;
 	firstName: string;
 	lastName: string;
 	email: string;
+	readonly password: string;
 	isAdmin: boolean;
 };
-
-export type InUserData = OutUserData & { readonly password: string };
 
 export type CustomErrorType = {
 	code: string;
@@ -16,4 +17,12 @@ export type CustomErrorType = {
 
 export type FileData = {
 	data: any;
+};
+
+export type BikeData = {
+	createdAt: Date;
+	orderID: string;
+	rentalPlan: enums.rentalPlanEnum;
+	quantity: number;
+	isReturned: boolean;
 };

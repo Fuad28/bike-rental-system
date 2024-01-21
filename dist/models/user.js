@@ -59,13 +59,15 @@ class User {
     static login(email, password) {
         return __awaiter(this, void 0, void 0, function* () {
             let user = yield utils_1.FileManager.getFromFile(constants_1.userDataFile, "email", email);
-            password;
+            if (!user) {
+                throw new Error("Invalid login credentials");
+            }
             let validPassword = yield bcrypt.compare(password, user.password);
             if (validPassword) {
                 return new User(user.firstName, user.lastName, user.email, user.isAdmin);
             }
             else {
-                return new Error("Invalid login credentials");
+                throw new Error("Invalid login credentials");
             }
         });
     }

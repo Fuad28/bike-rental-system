@@ -32,14 +32,17 @@ export class User {
 
 	static async login(email: string, password: string): Promise<User | Error> {
 		let user = await FileManager.getFromFile<InUserData>(userDataFile, "email", email);
-		password;
+
+		if (!user) {
+			throw new Error("Invalid login credentials");
+		}
 
 		let validPassword: boolean = await bcrypt.compare(password, user.password);
 
 		if (validPassword) {
 			return new User(user.firstName, user.lastName, user.email, user.isAdmin);
 		} else {
-			return new Error("Invalid login credentials");
+			throw new Error("Invalid login credentials");
 		}
 	}
 }

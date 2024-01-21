@@ -1,1 +1,25 @@
-{"data":[{"firstName":"Fuad","lastName":"Adio","email":"fuad@gmail.com","password":"$2b$10$YCCX4SZ70UWzqgvgTCaKR.bvvdN/OweHS3loC0O6hXvxtqgRv5ev.","isAdmin":false}]}
+{
+	"data": [
+		{
+			"firstName": "Fuad",
+			"lastName": "Adio",
+			"email": "fuad@gmail.com",
+			"password": "$2b$10$YCCX4SZ70UWzqgvgTCaKR.bvvdN/OweHS3loC0O6hXvxtqgRv5ev.",
+			"isAdmin": false
+		},
+		{
+			"firstName": "a",
+			"lastName": "c",
+			"email": "a",
+			"password": "$2b$10$zdYnEcKJ0CxEuHkB3BRonuUn0VWpLeodATGFkg0HdgnBQ28wCjDZu",
+			"isAdmin": false
+		},
+		{
+			"firstName": "Adio",
+			"lastName": "Abiodun",
+			"email": "123",
+			"password": "$2b$10$dP.CE9rmo2LCp7/1WZawseM3V.m6qLV/66a6g8itNFcGzPEcsSfIm",
+			"isAdmin": false
+		}
+	]
+}

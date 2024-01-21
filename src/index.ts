@@ -1,13 +1,15 @@
-import { getUserInput } from "./utils";
+import { authFlow } from "./flows/auth";
 import { User } from "./models/user";
 
 async function start() {
-	console.log("Welcome to the bike rental shop. Please login to proceed.");
-	const firstName: string = await getUserInput("What's your first name: ");
-	const lastName: string = await getUserInput("What's your last name: ");
-	const email: string = await getUserInput("What's your email: ");
-	const password: string = await getUserInput("What's your password: ");
-	User.register(firstName, lastName, email, password);
+	console.log("Welcome to the bike rental shop. Please signup/login to proceed.\n");
+
+	let user = await authFlow();
+
+	if (!(user instanceof User)) {
+		console.log("Invalid input. Try again.\n\n");
+		return;
+	}
 }
 
-start().then(() => console.log("Finished!"));
+start().then(() => console.log("\n\n\nFinished!"));

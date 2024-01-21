@@ -10,15 +10,22 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = require("./utils");
-const user_1 = require("./models/user");
+const flows_1 = require("./flows");
 function start() {
     return __awaiter(this, void 0, void 0, function* () {
-        console.log("Welcome to the bike rental shop. Please login to proceed.");
-        const firstName = yield (0, utils_1.getUserInput)("What's your first name: ");
-        const lastName = yield (0, utils_1.getUserInput)("What's your last name: ");
-        const email = yield (0, utils_1.getUserInput)("What's your email: ");
-        const password = yield (0, utils_1.getUserInput)("What's your password: ");
-        user_1.User.register(firstName, lastName, email, password);
+        console.log("Welcome to the bike rental shop. Please signup/login to proceed.\n");
+        let response = yield (0, utils_1.getUserInput)("A: login\nB: Signup\n");
+        switch (response.toUpperCase()) {
+            case "A":
+                yield (0, flows_1.loginFlow)();
+                break;
+            case "B":
+                yield (0, flows_1.registerFlow)();
+                break;
+            default:
+                console.log("Invalid input. Try again.\n\n");
+                start();
+        }
     });
 }
-start().then(() => console.log("Finished!"));
+start().then(() => console.log("\n\n\nFinished!"));
