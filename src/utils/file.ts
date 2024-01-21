@@ -7,10 +7,10 @@ const currentDir = __dirname;
 export class FileManager {
 	static async writeToFile(fileName: string, data: any): Promise<void> {
 		try {
-			const filePath = await FileManager.getFilePath(fileName);
-			let fileData = await FileManager._readFile(filePath);
-			fileData.data.push(data, null, 2);
-			let fileDataString = JSON.stringify(fileData, null, 2);
+			const [directoryPath, filePath] = await FileManager.getFilePath(fileName);
+			let fileData = await FileManager._readFile(directoryPath, filePath);
+			fileData.data.push(data);
+			let fileDataString = JSON.stringify(fileData);
 			await fs.writeFile(filePath, fileDataString);
 		} catch (err) {
 			const error = err as CustomErrorType;
@@ -18,34 +18,37 @@ export class FileManager {
 		}
 	}
 
-	static async _readFile(filePath: string): Promise<FileData> {
+	static async _readFile(directoryPath: string, filePath: string): Promise<FileData> {
 		let data: string;
 
 		try {
-			await fs.access(filePath, fs.constants.F_OK);
+			await fs.access(directoryPath, fs.constants.F_OK);
 			data = await fs.readFile(filePath, "utf-8");
 			return JSON.parse(data);
 		} catch (err) {
 			const error = err as CustomErrorType;
 
 			if (error.code == "ENOENT") {
-				fs.mkdir(filePath, { recursive: true });
-				const defaultJsonData = JSON.stringify({ data: [] }, null, 2);
+				fs.mkdir(directoryPath, { recursive: true });
+				const defaultJsonData = JSON.stringify({ data: [] });
 				await fs.writeFile(filePath, defaultJsonData);
-				return FileManager._readFile(filePath);
+				return FileManager._readFile(directoryPath, filePath);
 			} else {
 				throw new Error(error.message);
 			}
 		}
 	}
 
-	static async getFilePath(fileName: string): Promise<string> {
-		return path.join(currentDir, "data", fileName);
+	static async getFilePath(fileName: string): Promise<[string, string]> {
+		const directoryPath: string = path.join(currentDir, "data");
+		const filePath: string = path.join(directoryPath, fileName);
+
+		return [directoryPath, filePath];
 	}
 
-	static async getFromFile(fileName: string, key: string, value: string) {
-		const filePath = await FileManager.getFilePath(fileName);
-		let fileData = (await FileManager._readFile(filePath)).data;
+	static async getFromFile<T>(fileName: string, key: string, value: string): Promise<T> {
+		const [directoryPath, filePath] = await FileManager.getFilePath(fileName);
+		let fileData = (await FileManager._readFile(directoryPath, filePath)).data;
 
 		return fileData.find((item: any) => item[key] === value);
 	}

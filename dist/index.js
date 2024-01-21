@@ -1,27 +1,4 @@
 "use strict";
-var __createBinding = (this && this.__createBinding) || (Object.create ? (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    var desc = Object.getOwnPropertyDescriptor(m, k);
-    if (!desc || ("get" in desc ? !m.__esModule : desc.writable || desc.configurable)) {
-      desc = { enumerable: true, get: function() { return m[k]; } };
-    }
-    Object.defineProperty(o, k2, desc);
-}) : (function(o, m, k, k2) {
-    if (k2 === undefined) k2 = k;
-    o[k2] = m[k];
-}));
-var __setModuleDefault = (this && this.__setModuleDefault) || (Object.create ? (function(o, v) {
-    Object.defineProperty(o, "default", { enumerable: true, value: v });
-}) : function(o, v) {
-    o["default"] = v;
-});
-var __importStar = (this && this.__importStar) || function (mod) {
-    if (mod && mod.__esModule) return mod;
-    var result = {};
-    if (mod != null) for (var k in mod) if (k !== "default" && Object.prototype.hasOwnProperty.call(mod, k)) __createBinding(result, mod, k);
-    __setModuleDefault(result, mod);
-    return result;
-};
 var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, generator) {
     function adopt(value) { return value instanceof P ? value : new P(function (resolve) { resolve(value); }); }
     return new (P || (P = Promise))(function (resolve, reject) {
@@ -33,47 +10,15 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 const utils_1 = require("./utils");
-const fs = __importStar(require("fs/promises"));
-const path = __importStar(require("path"));
+const user_1 = require("./models/user");
 function start() {
     return __awaiter(this, void 0, void 0, function* () {
-        yield _readFile("data/user.json");
         console.log("Welcome to the bike rental shop. Please login to proceed.");
+        const firstName = yield (0, utils_1.getUserInput)("What's your first name: ");
+        const lastName = yield (0, utils_1.getUserInput)("What's your last name: ");
         const email = yield (0, utils_1.getUserInput)("What's your email: ");
         const password = yield (0, utils_1.getUserInput)("What's your password: ");
-        console.log(`Email is ${email}`);
-    });
-}
-const currentDir = __dirname;
-function _readFile(filePath) {
-    return __awaiter(this, void 0, void 0, function* () {
-        filePath = path.join(currentDir, ...filePath.split("/"));
-        let data;
-        try {
-            const flags = fs.constants.F_OK | fs.constants.W_OK;
-            console.log("hereeeeeeeeeeee 1");
-            console.log(`O_CRAT: ${fs.constants.O_CREAT}`);
-            yield fs.access(filePath, flags);
-            console.log("hereeeeeeeeeeee 2");
-            data = yield fs.readFile(filePath, "utf-8");
-            return JSON.parse(data);
-        }
-        catch (err) {
-            const error = err;
-            console.log("hereeeeeeeeeeee 3");
-            if (error.code == "ENOENT") {
-                console.log("hereeeeeeeeeeee 4");
-                let defaultJsonData = JSON.stringify({ data: [] });
-                yield fs.writeFile(filePath, defaultJsonData);
-                console.log("hereeeeeeeeeeee 5");
-                data = yield fs.readFile(filePath, "utf-8");
-                return JSON.parse(data);
-            }
-            else {
-                console.error(`Error reading file: ${error.message}`);
-                return null;
-            }
-        }
+        user_1.User.register(firstName, lastName, email, password);
     });
 }
 start().then(() => console.log("Finished!"));

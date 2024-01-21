@@ -34,50 +34,59 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.FileManager = void 0;
 const fs = __importStar(require("node:fs/promises"));
+const path = __importStar(require("path"));
+const currentDir = __dirname;
 class FileManager {
     static writeToFile(fileName, data) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                const filePath = "../data/" + fileName;
-                let jsonData = JSON.stringify(data, null, 2);
-                let fileData = yield this._readFile(filePath);
-                console.log(`FILEDAT: ${fileData}`);
+                const [directoryPath, filePath] = yield FileManager.getFilePath(fileName);
+                let fileData = yield FileManager._readFile(directoryPath, filePath);
+                fileData.data.push(data);
+                let fileDataString = JSON.stringify(fileData);
+                yield fs.writeFile(filePath, fileDataString);
             }
-            catch (error) {
-                console.error(`Error writing to file: ${error}`);
+            catch (err) {
+                const error = err;
+                console.error(`Error writing to file: ${error.message}`);
             }
-            return data;
         });
     }
-    static _readFile(filePath) {
+    static _readFile(directoryPath, filePath) {
         return __awaiter(this, void 0, void 0, function* () {
             let data;
             try {
-                console.log("hereeeeeeeeeeee 1");
-                yield fs.access(filePath, fs.constants.O_CREAT);
-                console.log("hereeeeeeeeeeee 2");
+                yield fs.access(directoryPath, fs.constants.F_OK);
                 data = yield fs.readFile(filePath, "utf-8");
                 return JSON.parse(data);
             }
             catch (err) {
                 const error = err;
-                console.log("hereeeeeeeeeeee 3");
                 if (error.code == "ENOENT") {
-                    console.log("hereeeeeeeeeeee 4");
-                    yield fs.writeFile(filePath, []);
-                    console.log("hereeeeeeeeeeee 5");
-                    data = yield fs.readFile(filePath, "utf-8");
-                    return JSON.parse(data);
+                    fs.mkdir(directoryPath, { recursive: true });
+                    const defaultJsonData = JSON.stringify({ data: [] });
+                    yield fs.writeFile(filePath, defaultJsonData);
+                    return FileManager._readFile(directoryPath, filePath);
                 }
                 else {
-                    console.error(`Error reading file: ${error.message}`);
-                    return null;
+                    throw new Error(error.message);
                 }
             }
         });
     }
-    static getFromFile() {
-        return __awaiter(this, void 0, void 0, function* () { });
+    static getFilePath(fileName) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const directoryPath = path.join(currentDir, "data");
+            const filePath = path.join(directoryPath, fileName);
+            return [directoryPath, filePath];
+        });
+    }
+    static getFromFile(fileName, key, value) {
+        return __awaiter(this, void 0, void 0, function* () {
+            const [directoryPath, filePath] = yield FileManager.getFilePath(fileName);
+            let fileData = (yield FileManager._readFile(directoryPath, filePath)).data;
+            return fileData.find((item) => item[key] === value);
+        });
     }
 }
 exports.FileManager = FileManager;
